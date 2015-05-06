@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>BEEADD59-2B53-4B62-BDAA-6EDA1FE79323</string>
+	<key>IDESourceControlProjectName</key>
+	<string>cm-ios</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>6F257A34-95EB-489D-B1F2-3B9DFC4DFBAC</key>
+		<string>git://github.com/allending/Kiwi.git</string>
+		<key>BBAB3AD2-15E4-4653-A705-D279CCD0CF95</key>
+		<string>https://github.com/cloudmine/cloudmine-ios.git</string>
+		<key>D02B8E81-9BFF-4A97-AD20-AD3814D5729D</key>
+		<string>git://github.com/AFNetworking/AFNetworking.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>cm-ios.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>6F257A34-95EB-489D-B1F2-3B9DFC4DFBAC</key>
+		<string>../ios/kiwi</string>
+		<key>BBAB3AD2-15E4-4653-A705-D279CCD0CF95</key>
+		<string>..</string>
+		<key>D02B8E81-9BFF-4A97-AD20-AD3814D5729D</key>
+		<string>../ios/ios/Vendor/AFNetworking</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/cloudmine/cloudmine-ios.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>BBAB3AD2-15E4-4653-A705-D279CCD0CF95</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D02B8E81-9BFF-4A97-AD20-AD3814D5729D</string>
+			<key>IDESourceControlWCCName</key>
+			<string>AFNetworking</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>BBAB3AD2-15E4-4653-A705-D279CCD0CF95</string>
+			<key>IDESourceControlWCCName</key>
+			<string>cloudmine-ios</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6F257A34-95EB-489D-B1F2-3B9DFC4DFBAC</string>
+			<key>IDESourceControlWCCName</key>
+			<string>kiwi</string>
+		</dict>
+	</array>
+</dict>
+</plist>
