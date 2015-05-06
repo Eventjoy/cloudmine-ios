@@ -238,10 +238,12 @@
         }
     }
 
-    [[NSException exceptionWithName:@"CMInternalInconsistencyException"
+    /*[[NSException exceptionWithName:@"CMInternalInconsistencyException"
                              reason:@"Trying to deserialize a non-dictionary object is not supported."
                            userInfo:nil]
-     raise];
+     raise];*/
+
+	NSLog(@"%@", objv);
 
     return nil;
 

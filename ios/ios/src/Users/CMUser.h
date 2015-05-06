@@ -13,6 +13,9 @@
 #import "CMSocialLoginViewController.h"
 
 /** Social network identifier for Facebook */
+extern NSString * const CMSocialNetworkGoogle;
+
+/** Social network identifier for Facebook */
 extern NSString * const CMSocialNetworkFacebook;
 
 /** Social network identifier for Twitter */

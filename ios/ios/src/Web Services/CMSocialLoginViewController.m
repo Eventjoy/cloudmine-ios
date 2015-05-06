@@ -58,22 +58,32 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+-(UIStatusBarStyle)preferredStatusBarStyle{
+	return UIStatusBarStyleDefault;
+}
 - (void)viewWillAppear:(BOOL)animated;
 {
     // Clear Cookies
     NSHTTPCookie *cookie;
     NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    for (cookie in [storage cookies]) {
-        [storage deleteCookie:cookie];
-    }
+	storage.cookieAcceptPolicy = NSHTTPCookieAcceptPolicyAlways;
+//    for (cookie in [storage cookies]) {
+//        [storage deleteCookie:cookie];
+//    }
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     if (self.isModal)
     {
-        self.webView.frame = CGRectMake(0, 44, self.view.frame.size.width, self.view.frame.size.height - 44);
-        self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
-        UINavigationItem *navigationItem = [[UINavigationItem alloc] initWithTitle:self.targetService];
+		NSInteger navHeight = 44;
+		if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) navHeight = 64;
+
+        self.webView.frame = CGRectMake(0, navHeight, self.view.frame.size.width, self.view.frame.size.height - navHeight);
+        self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, navHeight)];
+        UINavigationItem *navigationItem = [[UINavigationItem alloc] initWithTitle:@"Login"];//self.targetService];
         navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(dismiss)];
+		[navigationItem.leftBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+																  [UIColor colorWithRed:255/255.f green:66/255.f blue:60/255.f alpha:1], UITextAttributeTextColor,
+																  nil] forState:UIControlStateNormal];
         self.navigationBar.items = @[navigationItem];
         
         //
@@ -81,6 +91,25 @@
         // view controller's navigation bar that is responsible for presenting
         // us modally.
         //
+		[self.navigationBar setTranslucent:NO];
+		CGRect frame = [self.navigationBar frame];
+		frame.size.height = navHeight;
+		[self.navigationBar setFrame:frame];
+		if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+			[self setNeedsStatusBarAppearanceUpdate];
+		}
+		if ([self.navigationBar respondsToSelector:@selector(setShadowImage:)]) {
+			[self.navigationBar setBackgroundImage:[[UIImage alloc] init] forBarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
+			[self.navigationBar setShadowImage:[UIImage new]];
+		}
+		[self.navigationBar setBackgroundImage:[UIImage imageNamed:(44==navHeight)?@"nav-back.png":@"nav-back-64.png"] forBarMetrics:UIBarMetricsDefault];
+		if ([self.navigationBar respondsToSelector:@selector(setBackgroundColor:)]) {
+			[self.navigationBar setBackgroundColor:[UIColor colorWithRed:40/255.f green:179/255.f blue:191/255.f alpha:1]];
+		}
+		if ([self.navigationBar respondsToSelector:@selector(setBarTintColor:)]) {
+			[self.navigationBar setBarTintColor:[UIColor colorWithRed:40/255.f green:179/255.f blue:191/255.f alpha:1]];
+		}
+		
         if ([self.presentingViewController respondsToSelector:@selector(navigationBar)])
         {
             UIColor *presentingTintColor = ((UINavigationController *)self.presentingViewController).navigationBar.tintColor;
@@ -117,7 +146,7 @@
 
 - (void)processAccessTokenWithData:(NSData*)data;
 {
-    
+    NSLog(@"%@", data);
 }
 
 
@@ -132,6 +161,8 @@
 {
     
     NSString *currentURLstr = [[[webView request] URL] absoluteString];
+
+//	NSLog(@"%@", currentURLstr);
         
     NSString *baseURLstr = [NSString stringWithFormat:@"%@/app/%@/account/social/login/complete", CM_BASE_URL, _appID];
     

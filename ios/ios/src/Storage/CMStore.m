@@ -283,48 +283,50 @@ NSString * const CMStoreObjectDeletedNotification = @"CMStoreObjectDeletedNotifi
 - (void)_objectsWithKeys:(NSArray *)keys callback:(CMStoreObjectFetchCallback)callback userLevel:(BOOL)userLevel additionalOptions:(CMStoreOptions *)options {
     _CMAssertAPICredentialsInitialized;
 
-    [webService getValuesForKeys:keys
-              serverSideFunction:_CMTryMethod(options, serverSideFunction)
-                   pagingOptions:_CMTryMethod(options, pagingDescriptor)
-                  sortingOptions:_CMTryMethod(options, sortDescriptor)
-                            user:_CMUserOrNil
-                 extraParameters:_CMTryMethod(options, buildExtraParameters)
-                  successHandler:^(NSDictionary *results, NSDictionary *errors, NSDictionary *meta, NSDictionary *snippetResult, NSNumber *count, NSDictionary *headers) {
-                      NSArray *objects = [CMObjectDecoder decodeObjects:results];
-                      [self cacheObjectsInMemory:objects atUserLevel:userLevel];
-                      CMResponseMetadata *metadata = [[CMResponseMetadata alloc] initWithMetadata:meta];
-                      CMSnippetResult *result = [[CMSnippetResult alloc] initWithData:snippetResult];
-                      CMObjectFetchResponse *response = [[CMObjectFetchResponse alloc] initWithObjects:objects errors:errors snippetResult:result responseMetadata:metadata];
-                      response.count = count ? [count intValue] : [objects count];
+//	@synchronized(webService) {
+		[webService getValuesForKeys:keys
+				  serverSideFunction:_CMTryMethod(options, serverSideFunction)
+					   pagingOptions:_CMTryMethod(options, pagingDescriptor)
+					  sortingOptions:_CMTryMethod(options, sortDescriptor)
+								user:_CMUserOrNil
+					 extraParameters:_CMTryMethod(options, buildExtraParameters)
+					  successHandler:^(NSDictionary *results, NSDictionary *errors, NSDictionary *meta, NSDictionary *snippetResult, NSNumber *count, NSDictionary *headers) {
+						  NSArray *objects = [CMObjectDecoder decodeObjects:results];
+						  [self cacheObjectsInMemory:objects atUserLevel:userLevel];
+						  CMResponseMetadata *metadata = [[CMResponseMetadata alloc] initWithMetadata:meta];
+						  CMSnippetResult *result = [[CMSnippetResult alloc] initWithData:snippetResult];
+						  CMObjectFetchResponse *response = [[CMObjectFetchResponse alloc] initWithObjects:objects errors:errors snippetResult:result responseMetadata:metadata];
+						  response.count = count ? [count intValue] : [objects count];
 
-                      [objects enumerateObjectsUsingBlock:^(CMObject *obj, NSUInteger idx, BOOL *stop) {
-                          obj.ownerId = [metadata metadataForObject:obj ofType:@"owner"];
-                          NSArray *permissions = [metadata metadataForObject:obj ofType:@"permissions"];
-                          if (![obj.ownerId isEqualToString:self.user.objectId] && permissions) {
-                              CMACL *acl = [[CMACL alloc] init];
-                              acl.permissions = [NSSet setWithArray:permissions];
-                              acl.members = [NSSet setWithObject:user.objectId];
-                              obj.sharedACL = acl;
-                          }
-                      }];
+						  [objects enumerateObjectsUsingBlock:^(CMObject *obj, NSUInteger idx, BOOL *stop) {
+							  obj.ownerId = [metadata metadataForObject:obj ofType:@"owner"];
+							  NSArray *permissions = [metadata metadataForObject:obj ofType:@"permissions"];
+							  if (![obj.ownerId isEqualToString:self.user.objectId] && permissions) {
+								  CMACL *acl = [[CMACL alloc] init];
+								  acl.permissions = [NSSet setWithArray:permissions];
+								  acl.members = [NSSet setWithObject:user.objectId];
+								  obj.sharedACL = acl;
+							  }
+						  }];
 
-                      NSDate *expirationDate = [self.dateFormatter dateFromString:[headers objectForKey:CM_TOKENEXPIRATION_HEADER]];
-                      if (expirationDate && userLevel) {
-                          user.tokenExpiration = expirationDate;
-                      }
+						  NSDate *expirationDate = [self.dateFormatter dateFromString:[headers objectForKey:CM_TOKENEXPIRATION_HEADER]];
+						  if (expirationDate && userLevel) {
+							  user.tokenExpiration = expirationDate;
+						  }
 
-                      if (callback) {
-                          callback(response);
-                      }
-                  } errorHandler:^(NSError *error) {
-                      NSLog(@"CloudMine *** Error occurred during object request for keys: %@ for user: %@ with message: %@", keys, _CMUserOrNil, [error description]);
-                      CMObjectFetchResponse *response = [[CMObjectFetchResponse alloc] initWithError:error];
-                      lastError = error;
-                      if (callback) {
-                          callback(response);
-                      }
-                  }
-     ];
+						  if (callback) {
+							  callback(response);
+						  }
+					  } errorHandler:^(NSError *error) {
+						  NSLog(@"CloudMine *** Error occurred during object request for keys: %@ for user: %@ with message: %@", keys, _CMUserOrNil, [error description]);
+						  CMObjectFetchResponse *response = [[CMObjectFetchResponse alloc] initWithError:error];
+						  lastError = error;
+						  if (callback) {
+							  callback(response);
+						  }
+					  }
+		 ];
+//	}
 }
 
 #pragma mark Object querying by type
@@ -373,48 +375,51 @@ NSString * const CMStoreObjectDeletedNotification = @"CMStoreObjectDeletedNotifi
         return [self _allObjects:callback userLevel:userLevel additionalOptions:options];
     }
 
-    [webService searchValuesFor:query
-             serverSideFunction:_CMTryMethod(options, serverSideFunction)
-                  pagingOptions:_CMTryMethod(options, pagingDescriptor)
-                 sortingOptions:_CMTryMethod(options, sortDescriptor)
-                           user:_CMUserOrNil
-                extraParameters:_CMTryMethod(options, buildExtraParameters)
-                 successHandler:^(NSDictionary *results, NSDictionary *errors, NSDictionary *meta, NSDictionary *snippetResult, NSNumber *count, NSDictionary *headers) {
-                     NSArray *objects = [CMObjectDecoder decodeObjects:results];
-                     CMResponseMetadata *metadata = [[CMResponseMetadata alloc] initWithMetadata:meta];
-                     CMSnippetResult *result = [[CMSnippetResult alloc] initWithData:snippetResult];
-                     [self cacheObjectsInMemory:objects atUserLevel:userLevel];
-                     CMObjectFetchResponse *response = [[CMObjectFetchResponse alloc] initWithObjects:objects errors:errors snippetResult:result responseMetadata:metadata];
-                     response.count = count ? [count intValue] : [objects count];
+//	@synchronized(webService) {
+		[webService searchValuesFor:query
+				 serverSideFunction:_CMTryMethod(options, serverSideFunction)
+					  pagingOptions:_CMTryMethod(options, pagingDescriptor)
+					 sortingOptions:_CMTryMethod(options, sortDescriptor)
+							   user:_CMUserOrNil
+					extraParameters:_CMTryMethod(options, buildExtraParameters)
+					 successHandler:^(NSDictionary *results, NSDictionary *errors, NSDictionary *meta, NSDictionary *snippetResult, NSNumber *count, NSDictionary *headers) {
+						 NSLog(@"%@", query);
+						 NSArray *objects = [CMObjectDecoder decodeObjects:results];
+						 CMResponseMetadata *metadata = [[CMResponseMetadata alloc] initWithMetadata:meta];
+						 CMSnippetResult *result = [[CMSnippetResult alloc] initWithData:snippetResult];
+						 [self cacheObjectsInMemory:objects atUserLevel:userLevel];
+						 CMObjectFetchResponse *response = [[CMObjectFetchResponse alloc] initWithObjects:objects errors:errors snippetResult:result responseMetadata:metadata];
+						 response.count = count ? [count intValue] : [objects count];
 
-                     [objects enumerateObjectsUsingBlock:^(CMObject *obj, NSUInteger idx, BOOL *stop) {
-                         obj.ownerId = [metadata metadataForObject:obj ofType:@"owner"];
-                         NSArray *permissions = [metadata metadataForObject:obj ofType:@"permissions"];
-                         if (![obj.ownerId isEqualToString:self.user.objectId] && permissions) {
-                             CMACL *acl = [[CMACL alloc] init];
-                             acl.permissions = [NSSet setWithArray:permissions];
-                             acl.members = [NSSet setWithObject:user.objectId];
-                             obj.sharedACL = acl;
-                         }
-                     }];
+						 [objects enumerateObjectsUsingBlock:^(CMObject *obj, NSUInteger idx, BOOL *stop) {
+							 obj.ownerId = [metadata metadataForObject:obj ofType:@"owner"];
+							 NSArray *permissions = [metadata metadataForObject:obj ofType:@"permissions"];
+							 if (![obj.ownerId isEqualToString:self.user.objectId] && permissions) {
+								 CMACL *acl = [[CMACL alloc] init];
+								 acl.permissions = [NSSet setWithArray:permissions];
+								 acl.members = [NSSet setWithObject:user.objectId];
+								 obj.sharedACL = acl;
+							 }
+						 }];
 
-                     NSDate *expirationDate = [self.dateFormatter dateFromString:[headers objectForKey:CM_TOKENEXPIRATION_HEADER]];
-                     if (expirationDate && userLevel) {
-                         user.tokenExpiration = expirationDate;
-                     }
+						 NSDate *expirationDate = [self.dateFormatter dateFromString:[headers objectForKey:CM_TOKENEXPIRATION_HEADER]];
+						 if (expirationDate && userLevel) {
+							 user.tokenExpiration = expirationDate;
+						 }
 
-                     if (callback) {
-                         callback(response);
-                     }
-                 } errorHandler:^(NSError *error) {
-                     NSLog(@"CloudMine *** Error occurred during object search with query: %@ for user: %@ with message: %@", query, _CMUserOrNil, [error description]);
-                     CMObjectFetchResponse *response = [[CMObjectFetchResponse alloc] initWithError:error];
-                     lastError = error;
-                     if (callback) {
-                         callback(response);
-                     }
-                 }
-     ];
+						 if (callback) {
+							 callback(response);
+						 }
+					 } errorHandler:^(NSError *error) {
+						 NSLog(@"CloudMine *** Error occurred during object search with query: %@ for user: %@ with message: %@", query, _CMUserOrNil, [error description]);
+						 CMObjectFetchResponse *response = [[CMObjectFetchResponse alloc] initWithError:error];
+						 lastError = error;
+						 if (callback) {
+							 callback(response);
+						 }
+					 }
+		 ];
+//	}
 }
 
 - (void)searchACLs:(NSString *)query callback:(CMStoreACLFetchCallback)callback {
@@ -454,20 +459,22 @@ NSString * const CMStoreObjectDeletedNotification = @"CMStoreObjectDeletedNotifi
 }
 
 - (void)saveAllWithOptions:(CMStoreOptions *)options callback:(CMStoreObjectUploadCallback)callback {
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+//	@synchronized(webService) {
+		dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 
-    dispatch_async(queue, ^{
-        [self saveAllAppObjectsWithOptions:options callback:callback];
-    });
+		dispatch_async(queue, ^{
+			[self saveAllAppObjectsWithOptions:options callback:callback];
+		});
 
-    if (user) {
-        dispatch_async(queue, ^{
-            [self saveAllUserObjectsWithOptions:options callback:callback];
-        });
-        dispatch_async(queue, ^{
-            [self saveAllACLs:callback];
-        });
-    }
+		if (user) {
+			dispatch_async(queue, ^{
+				[self saveAllUserObjectsWithOptions:options callback:callback];
+			});
+			dispatch_async(queue, ^{
+				[self saveAllACLs:callback];
+			});
+		}
+//	}
 }
 
 - (void)saveAllAppObjects:(CMStoreObjectUploadCallback)callback {
@@ -527,48 +534,50 @@ NSString * const CMStoreObjectDeletedNotification = @"CMStoreObjectDeletedNotifi
     }];
 
     // Only send the dirty objects to the servers
-    [webService updateValuesFromDictionary:[CMObjectEncoder encodeObjects:dirtyObjects]
-                        serverSideFunction:_CMTryMethod(options, serverSideFunction)
-                                      user:_CMUserOrNil
-                           extraParameters:_CMTryMethod(options, buildExtraParameters)
-                            successHandler:^(NSDictionary *results, NSDictionary *errors, NSDictionary *meta, NSDictionary *snippetResult, NSNumber *count, NSDictionary *headers) {
-                                // Add clean objects that were omitted from the request into the response as pseudo-updated
-                                NSMutableDictionary *mutResults = [results mutableCopy];
-                                [mutResults addEntriesFromDictionary:errors];
-                                [cleanObjects enumerateObjectsUsingBlock:^(CMObject *obj, NSUInteger idx, BOOL *stop) {
-                                    [mutResults setObject:@"updated" forKey:obj.objectId];
-                                }];
-                                results = [mutResults copy];
+//	@synchronized(webService) {
+		[webService updateValuesFromDictionary:[CMObjectEncoder encodeObjects:dirtyObjects]
+							serverSideFunction:_CMTryMethod(options, serverSideFunction)
+										  user:_CMUserOrNil
+							   extraParameters:_CMTryMethod(options, buildExtraParameters)
+								successHandler:^(NSDictionary *results, NSDictionary *errors, NSDictionary *meta, NSDictionary *snippetResult, NSNumber *count, NSDictionary *headers) {
+									// Add clean objects that were omitted from the request into the response as pseudo-updated
+									NSMutableDictionary *mutResults = [results mutableCopy];
+									[mutResults addEntriesFromDictionary:errors];
+									[cleanObjects enumerateObjectsUsingBlock:^(CMObject *obj, NSUInteger idx, BOOL *stop) {
+										[mutResults setObject:@"updated" forKey:obj.objectId];
+									}];
+									results = [mutResults copy];
 
-                                CMResponseMetadata *metadata = [[CMResponseMetadata alloc] initWithMetadata:meta];
-                                CMSnippetResult *result = [[CMSnippetResult alloc] initWithData:snippetResult];
-                                CMObjectUploadResponse *response = [[CMObjectUploadResponse alloc] initWithUploadStatuses:results snippetResult:result responseMetadata:metadata];
+									CMResponseMetadata *metadata = [[CMResponseMetadata alloc] initWithMetadata:meta];
+									CMSnippetResult *result = [[CMSnippetResult alloc] initWithData:snippetResult];
+									CMObjectUploadResponse *response = [[CMObjectUploadResponse alloc] initWithUploadStatuses:results snippetResult:result responseMetadata:metadata];
 
-                                NSDate *expirationDate = [self.dateFormatter dateFromString:[headers objectForKey:CM_TOKENEXPIRATION_HEADER]];
-                                if (expirationDate && userLevel) {
-                                    user.tokenExpiration = expirationDate;
-                                }
+									NSDate *expirationDate = [self.dateFormatter dateFromString:[headers objectForKey:CM_TOKENEXPIRATION_HEADER]];
+									if (expirationDate && userLevel) {
+										user.tokenExpiration = expirationDate;
+									}
 
-                                // If the dirty objects were successfully uploaded, mark them as clean
-                                [dirtyObjects enumerateObjectsUsingBlock:^(CMObject *object, NSUInteger idx, BOOL *stop) {
-                                    NSString *status = [response.uploadStatuses objectForKey:object.objectId];
-                                    if ([status isEqualToString:@"updated"] || [status isEqualToString:@"created"]) {
-                                        object.dirty = NO;
-                                    }
-                                }];
+									// If the dirty objects were successfully uploaded, mark them as clean
+									[dirtyObjects enumerateObjectsUsingBlock:^(CMObject *object, NSUInteger idx, BOOL *stop) {
+										NSString *status = [response.uploadStatuses objectForKey:object.objectId];
+										if ([status isEqualToString:@"updated"] || [status isEqualToString:@"created"]) {
+											object.dirty = NO;
+										}
+									}];
 
-                                if (callback) {
-                                    callback(response);
-                                }
-                            } errorHandler:^(NSError *error) {
-                                NSLog(@"CloudMine *** Error occurred during object save with message: %@", [error description]);
-                                CMObjectUploadResponse *response = [[CMObjectUploadResponse alloc] initWithError:error];
-                                lastError = error;
-                                if (callback) {
-                                    callback(response);
-                                }
-                            }
-     ];
+									if (callback) {
+										callback(response);
+									}
+								} errorHandler:^(NSError *error) {
+									NSLog(@"CloudMine *** Error occurred during object save with message: %@", [error description]);
+									CMObjectUploadResponse *response = [[CMObjectUploadResponse alloc] initWithError:error];
+									lastError = error;
+									if (callback) {
+										callback(response);
+									}
+								}
+		 ];
+//	}
 }
 
 - (void)saveACLsOnObject:(CMObject *)object callback:(CMStoreObjectUploadCallback)callback {

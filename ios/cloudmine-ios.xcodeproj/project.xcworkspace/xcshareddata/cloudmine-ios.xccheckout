@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>03B3F883-F601-4502-AAA7-759D6344C6BE</string>
+	<key>IDESourceControlProjectName</key>
+	<string>cloudmine-ios</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>A9C13477-F0B0-425B-AE59-9B18FD4E0567</key>
+		<string>git://github.com/AFNetworking/AFNetworking.git</string>
+		<key>F3AF9E7C-0DE3-4FDC-A7D9-C1613496D2BD</key>
+		<string>https://github.com/cloudmine/cloudmine-ios.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ios/cloudmine-ios.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>A9C13477-F0B0-425B-AE59-9B18FD4E0567</key>
+		<string>../../ios/Vendor/AFNetworking</string>
+		<key>F3AF9E7C-0DE3-4FDC-A7D9-C1613496D2BD</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/cloudmine/cloudmine-ios.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>F3AF9E7C-0DE3-4FDC-A7D9-C1613496D2BD</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>A9C13477-F0B0-425B-AE59-9B18FD4E0567</string>
+			<key>IDESourceControlWCCName</key>
+			<string>AFNetworking</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F3AF9E7C-0DE3-4FDC-A7D9-C1613496D2BD</string>
+			<key>IDESourceControlWCCName</key>
+			<string>cloudmine-ios</string>
+		</dict>
+	</array>
+</dict>
+</plist>

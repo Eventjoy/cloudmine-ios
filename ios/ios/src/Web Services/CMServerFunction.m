@@ -6,7 +6,8 @@
 //  See LICENSE file included with SDK for details.
 //
 
-#import <YAJLiOS/YAJL.h>
+//#import <YAJLiOS/YAJL.h>
+#import <yajl-objc/Classes/YAJL.h>
 #import "CMServerFunction.h"
 
 @implementation CMServerFunction

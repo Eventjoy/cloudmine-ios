@@ -24,6 +24,7 @@
 @end
 
 
+NSString * const CMSocialNetworkGoogle = @"google";
 NSString * const CMSocialNetworkFacebook = @"facebook";
 NSString * const CMSocialNetworkTwitter = @"twitter";
 NSString * const CMSocialNetworkFoursquare = @"foursquare";
@@ -516,30 +517,38 @@ static CMWebService *webService;
 }
 
 + (NSMutableDictionary *)cachedUsers {
-    NSURL *cacheLocation = [self cacheLocation];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:[cacheLocation relativePath]]) {
-        // Since the file doesn't already exist, create it with an empty dictionary.
-        [[NSKeyedArchiver archivedDataWithRootObject:[NSDictionary dictionary]] writeToURL:cacheLocation atomically:YES];
-        return [NSMutableDictionary dictionary];
-    }
-    return [[NSKeyedUnarchiver unarchiveObjectWithData:[NSData dataWithContentsOfURL:cacheLocation]] mutableCopy];
+	@synchronized(self) {
+		NSURL *cacheLocation = [self cacheLocation];
+		if (![[NSFileManager defaultManager] fileExistsAtPath:[cacheLocation relativePath]]) {
+			// Since the file doesn't already exist, create it with an empty dictionary.
+			[[NSKeyedArchiver archivedDataWithRootObject:[NSDictionary dictionary]] writeToURL:cacheLocation atomically:YES];
+			return [NSMutableDictionary dictionary];
+		}
+		return [[NSKeyedUnarchiver unarchiveObjectWithData:[NSData dataWithContentsOfURL:cacheLocation]] mutableCopy];
+	}
 }
 
 - (void)writeToCache {
-    [CMUser cacheMultipleUsers:$array(self)];
+	@synchronized(self) {
+		[CMUser cacheMultipleUsers:$array(self)];
+	}
 }
 
 + (void)cacheMultipleUsers:(NSArray *)users {
-    NSMutableDictionary *cachedUsers = [self cachedUsers];
-    [users enumerateObjectsUsingBlock:^(CMUser *obj, NSUInteger idx, BOOL *stop) {
-        [cachedUsers setObject:obj forKey:obj.objectId];
-    }];
+	@synchronized(self) {
+		NSMutableDictionary *cachedUsers = [self cachedUsers];
+		[users enumerateObjectsUsingBlock:^(CMUser *obj, NSUInteger idx, BOOL *stop) {
+			[cachedUsers setObject:obj forKey:obj.objectId];
+		}];
 
-    [[NSKeyedArchiver archivedDataWithRootObject:cachedUsers] writeToURL:[self cacheLocation] atomically:YES];
+		[[NSKeyedArchiver archivedDataWithRootObject:cachedUsers] writeToURL:[self cacheLocation] atomically:YES];
+	}
 }
 
 + (CMUser *)userFromCacheWithIdentifier:(NSString *)objectId {
-    return [[self cachedUsers] objectForKey:objectId];
+	@synchronized(self) {
+		return [[self cachedUsers] objectForKey:objectId];
+	}
 }
 
 #pragma mark - Private stuff
